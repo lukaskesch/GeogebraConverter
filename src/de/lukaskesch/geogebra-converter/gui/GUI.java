@@ -18,6 +18,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import app.App;
+
 public class GUI implements ActionListener {
 
     private static final String TITLE = "Geogebra Converter";
@@ -25,6 +27,8 @@ public class GUI implements ActionListener {
 
     private JLabel label = new JLabel("No file selected");
     private JFrame frame = new JFrame();
+
+    private App app;
 
     public GUI() {
 
@@ -58,21 +62,20 @@ public class GUI implements ActionListener {
         }
 
         File selectedFile = fileChooser.getSelectedFile();
-        String filePath = selectedFile.getAbsolutePath();
-        String fileName = selectedFile.getName();
-        System.out.println("Selected filepath: " + filePath);
-        System.out.println("Selected filename: " + fileName);
-        label.setText("Opened file: " + filePath);
 
-        String folderPath = removeFileExtension(filePath);
-        System.out.println("Folder path: " + folderPath);
+        app = new App(selectedFile);
 
-        try {
-            createNewFolder(folderPath);
-            unzip(filePath);
-        } catch (Exception exception) {
-            // TODO: handle exception
-        }
+
+
+        label.setText("Opened file: " + app.getFileName());
+
+        app.run();
+
+        // try {
+        //     unzip(filePath);
+        // } catch (Exception exception) {
+        //     // TODO: handle exception
+        // }
     }
 
     // create one Frame
@@ -80,22 +83,9 @@ public class GUI implements ActionListener {
         new GUI();
     }
 
-    public boolean createNewFolder(String path) {
-        File theDir = new File(path);
-        if (theDir.exists()) {
-            return false;
-        }
-        theDir.mkdirs();
-        return true;
-    }
+    
 
-    public String removeFileExtension(String fileName) {
-        int pos = fileName.lastIndexOf(".");
-        if (pos > 0) {
-            return fileName.substring(0, pos);
-        }
-        return fileName;
-    }
+   
    
 
     public static void unzip(String filePath) throws  IOException {
