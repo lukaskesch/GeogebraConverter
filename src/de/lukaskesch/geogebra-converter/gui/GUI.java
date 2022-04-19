@@ -80,17 +80,12 @@ public class GUI implements ActionListener {
 
         app = new App(selectedFile);
 
+        if(app.run()) {
+            label.setText("Conversion successful");
+        } else {
+            label.setText("Conversion failed");
+        }
 
-
-        label.setText("Opened file: " + app.getFileName());
-
-        app.run();
-
-        // try {
-        //     unzip(filePath);
-        // } catch (Exception exception) {
-        //     // TODO: handle exception
-        // }
     }
 
     // create one Frame
