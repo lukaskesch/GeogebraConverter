@@ -8,7 +8,9 @@ import java.nio.file.Files;
 
 import org.w3c.dom.Document;
 
+import app.files.FileHandler;
 import app.files.XMLParser;
+import app.files.ZipHandler;
 
 
 
@@ -25,8 +27,8 @@ public class App {
         this.file = file;
         filePath = file.getAbsolutePath();
         fileName = file.getName();
-        fileNameWithoutExtension = removeFileExtension(fileName);
-        workingFolderPath = removeFileExtension(filePath);
+        fileNameWithoutExtension = FileHandler.removeFileExtension(fileName);
+        workingFolderPath = FileHandler.removeFileExtension(filePath);
     }
 
     public String getFileName() {
@@ -53,15 +55,15 @@ public class App {
     }
 
     public void createWorkingFolder() {
-        String folderPath = removeFileExtension(filePath);
-        createNewFolder(folderPath);
+        String folderPath = FileHandler.removeFileExtension(filePath);
+        FileHandler.createNewFolder(folderPath);
     }
 
     public void moveFileToWorkingFolder() {
         File source = file;
         File dest = new File(workingFolderPath + "/" + fileName);
         try {
-            copyFile(source, dest);
+            FileHandler.copyFile(source, dest);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,7 +73,7 @@ public class App {
         File source = new File(workingFolderPath + "/" + fileName);
         File dest = new File(workingFolderPath + "/" + fileNameWithoutExtension + ".zip");
         try {
-            copyFile(source, dest);
+            FileHandler.copyFile(source, dest);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,29 +81,14 @@ public class App {
 
     public void unzipFile() throws IOException {
         String zipFilePath = workingFolderPath + "/" + fileNameWithoutExtension + ".zip";
-        unzip(zipFilePath, workingFolderPath);
+        ZipHandler.unzip(zipFilePath, workingFolderPath);
     }
 
-    public void copyFile(File from, File to) throws IOException {
-        Files.copy(from.toPath(), to.toPath());
-    }
     
-    public String removeFileExtension(String fileName) {
-        int pos = fileName.lastIndexOf(".");
-        if (pos > 0) {
-            return fileName.substring(0, pos);
-        }
-        return fileName;
-    }
+    
+   
 
-    public boolean createNewFolder(String path) {
-        File theDir = new File(path);
-        if (theDir.exists()) {
-            return false;
-        }
-        theDir.mkdirs();
-        return true;
-    }
+    
 
     
 

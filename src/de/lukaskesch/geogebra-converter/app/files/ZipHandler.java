@@ -10,7 +10,6 @@ import java.util.zip.ZipInputStream;
 public class ZipHandler {
     
 
-
     public static void unzip(String filePath, String destinationPath) throws IOException {
         String fileZip = filePath;
         File destDir = new File(destinationPath);
