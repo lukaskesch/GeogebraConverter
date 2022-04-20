@@ -1,10 +1,7 @@
 package app;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 
 import org.w3c.dom.Document;
 
@@ -33,67 +30,86 @@ public class App {
     }
 
     public String run() {
-        createWorkingFolder();
-        moveFileToWorkingFolder();
-        renameFile();
-
-        Document document;
-        try {
-            unzipFile();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Error while unzipping file: " + e.getMessage();
+        if (!createWorkingFolder()) {
+            return "Error, could not create working folder";
         }
 
-        document = XMLParser.getParsedXML(workingFolderPath + "/geogebra.xml");
+        if (!moveFileToWorkingFolder()) {
+            return "Error, could not move file to working folder";
+        }
+
+        if(!renameFile()) {
+            return "Error, could not rename the " + fileName + " file";
+        }
+        
+        if (!unzipFile()) {
+            return "Error, could not unzip the " + workingFolderPath + "/" + fileNameWithoutExtension + ".zip file";
+        }
+
+        Document document = XMLParser.getParsedXML(workingFolderPath + "/geogebra.xml");
         if (document == null) {
             return "Error while parsing XML file";
         }
 
-        try {
-            rezipFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Error while rezipping file: " + e.getMessage();
+        if(!rezipFile()) {
+            return "Error, could not rezip the " + workingFolderPath + "folder";
         }
+        
 
         return "Conversion successful";
     }
 
-    public void createWorkingFolder() {
+    public boolean createWorkingFolder() {
         String folderPath = FileHandler.removeFileExtension(filePath);
-        FileHandler.createNewFolder(folderPath);
+        return FileHandler.createNewFolder(folderPath);
     }
 
-    public void moveFileToWorkingFolder() {
+    public boolean moveFileToWorkingFolder() {
         File source = file;
         File dest = new File(workingFolderPath + "/" + fileName);
         try {
             FileHandler.copyFile(source, dest);
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    public void renameFile() {
+    public boolean renameFile() {
         File source = new File(workingFolderPath + "/" + fileName);
         File dest = new File(workingFolderPath + "/" + fileNameWithoutExtension + ".zip");
         try {
             FileHandler.copyFile(source, dest);
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    public void unzipFile() throws IOException {
+    public boolean unzipFile() {
         String zipFilePath = workingFolderPath + "/" + fileNameWithoutExtension + ".zip";
-        ZipHandler.unzip(zipFilePath, workingFolderPath);
+        try {
+            ZipHandler.unzip(zipFilePath, workingFolderPath);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
-    public void rezipFile() throws IOException {
+    public boolean rezipFile() {
         String destinationPath = workingFolderPath.replace(fileName, fileName) + ".zip";
-        ZipHandler.zipFolder(workingFolderPath, destinationPath);
+        try {
+            ZipHandler.zipFolder(workingFolderPath, destinationPath);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 }
