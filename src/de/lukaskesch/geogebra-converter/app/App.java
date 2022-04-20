@@ -12,9 +12,6 @@ import app.files.FileHandler;
 import app.files.XMLParser;
 import app.files.ZipHandler;
 
-
-
-
 public class App {
 
     private final File file;
@@ -42,14 +39,15 @@ public class App {
 
         try {
             unzipFile();
-            Document  document = XMLParser.getParsedXML(workingFolderPath + "/geogebra.xml");
+            Document document = XMLParser.getParsedXML(workingFolderPath + "/geogebra.xml");
+            rezipFile();
             System.out.println("Conversion successful");
+
         } catch (IOException e) {
             System.err.println("Error while unzipping file: " + e.getMessage());
             e.printStackTrace();
             return false;
-        } 
-
+        }
 
         return true;
     }
@@ -84,18 +82,9 @@ public class App {
         ZipHandler.unzip(zipFilePath, workingFolderPath);
     }
 
-    
-    
-   
-
-    
-
-    
-
-    
-    
-
-    
-
+    public void rezipFile() throws IOException {
+        String destinationPath = workingFolderPath.replace(fileName, fileName) + ".zip";
+        ZipHandler.zipFolder(workingFolderPath, destinationPath);
+    }
 
 }
