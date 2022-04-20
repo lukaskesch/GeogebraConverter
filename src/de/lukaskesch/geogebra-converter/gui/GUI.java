@@ -79,12 +79,8 @@ public class GUI implements ActionListener {
         File selectedFile = fileChooser.getSelectedFile();
 
         app = new App(selectedFile);
-
-        if(app.run()) {
-            label.setText("Conversion successful");
-        } else {
-            label.setText("Conversion failed");
-        }
+        String response = app.run();
+        label.setText(response);
 
     }
 

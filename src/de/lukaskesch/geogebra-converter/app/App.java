@@ -32,24 +32,33 @@ public class App {
         return fileName;
     }
 
-    public boolean run() {
+    public String run() {
         createWorkingFolder();
         moveFileToWorkingFolder();
         renameFile();
 
+        Document document;
         try {
             unzipFile();
-            Document document = XMLParser.getParsedXML(workingFolderPath + "/geogebra.xml");
-            rezipFile();
-            System.out.println("Conversion successful");
 
         } catch (IOException e) {
-            System.err.println("Error while unzipping file: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return "Error while unzipping file: " + e.getMessage();
         }
 
-        return true;
+        document = XMLParser.getParsedXML(workingFolderPath + "/geogebra.xml");
+        if (document == null) {
+            return "Error while parsing XML file";
+        }
+
+        try {
+            rezipFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error while rezipping file: " + e.getMessage();
+        }
+
+        return "Conversion successful";
     }
 
     public void createWorkingFolder() {
